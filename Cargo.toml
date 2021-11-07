@@ -1,6 +1,6 @@
 [package]
 name = "graph_symmetry_wasm_binding"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Qin Wan"]
 edition = "2018"
 license = "MIT"

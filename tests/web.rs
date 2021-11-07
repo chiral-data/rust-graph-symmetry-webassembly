@@ -30,6 +30,7 @@ fn test_givp() {
     for i in 0..orbits_target.len() {
         assert_eq!(sr.get_orbits(i), orbits_target[i]);
     }
+    assert_eq!(sr.orbits_count(), 4);
 }
 
 #[wasm_bindgen_test]
@@ -42,5 +43,6 @@ fn test_cnap() {
     for i in 0..orbits_target.len() {
         assert_eq!(sr_cnap.get_orbits(i), orbits_target[i]);
     }
+    assert_eq!(sr_cnap.orbits_count(), 4);
 }
 

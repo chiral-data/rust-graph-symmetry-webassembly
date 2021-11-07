@@ -35,6 +35,10 @@ pub struct SymmetryResult {
 
 #[wasm_bindgen]
 impl SymmetryResult {
+    pub fn orbits_count(&self) -> usize {
+        self.orbits.len()
+    }
+
     pub fn get_orbits(&self, index: usize) -> Vec<usize> {
         if index < self.orbits.len() {
             self.orbits[index].clone()
