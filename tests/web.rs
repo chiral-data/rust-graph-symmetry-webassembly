@@ -12,7 +12,6 @@ use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
-extern crate js_sys;
 extern crate graph_symmetry_wasm_binding;
 
 #[wasm_bindgen_test]
@@ -25,18 +24,23 @@ fn test_canon_smiles() {
 fn test_givp() {
     let smiles = "C(C)(C)CCNCCC(C)(C)";
     let avw = graph_symmetry_wasm_binding::smiles_to_atom_vec(smiles);
-    let gr = graph_symmetry_wasm_binding::givp(&avw);
-    assert_eq!(gr.get_numbering(), vec![11, 4, 4, 8, 6, 9, 6, 8, 11, 4, 4]);
-    // Method of converting JsValue([BigInt, BigInt]) back to Vec<usize>, NOT found
-    // assert_eq!(gr.get_orbits(), vec![vec![0, 8], vec![1, 2, 9, 10], vec![3, 7], vec![4, 6]]))
+    let sr = graph_symmetry_wasm_binding::givp(&avw);
+    assert_eq!(sr.get_numbering(), vec![11, 4, 4, 8, 6, 9, 6, 8, 11, 4, 4]);
+    let orbits_target = vec![vec![0, 8], vec![1, 2, 9, 10], vec![3, 7], vec![4, 6]];
+    for i in 0..orbits_target.len() {
+        assert_eq!(sr.get_orbits(i), orbits_target[i]);
+    }
 }
 
 #[wasm_bindgen_test]
 fn test_cnap() {
     let smiles = "C(C)(C)CCNCCC(C)(C)";
     let avw = graph_symmetry_wasm_binding::smiles_to_atom_vec(smiles);
-    let gr = graph_symmetry_wasm_binding::givp(&avw);
-    // Method of converting JsValue([BigInt, BigInt]) back to Vec<usize>, NOT found
-    // assert_eq!(graph_symmetry_wasm_binding::cnap(&avw, &gr), vec![vec![0, 8], vec![1, 2, 9, 10], vec![3, 7], vec![4, 6]]))
+    let sr_givp = graph_symmetry_wasm_binding::givp(&avw);
+    let sr_cnap = graph_symmetry_wasm_binding::cnap(&avw, &sr_givp);
+    let orbits_target = vec![vec![0, 8], vec![1, 2, 9, 10], vec![3, 7], vec![4, 6]];
+    for i in 0..orbits_target.len() {
+        assert_eq!(sr_cnap.get_orbits(i), orbits_target[i]);
+    }
 }
 

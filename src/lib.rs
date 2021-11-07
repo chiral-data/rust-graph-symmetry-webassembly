@@ -27,23 +27,20 @@ pub fn smiles_to_atom_vec(smiles: &str) -> AtomVecWrapper {
 
 type Orbits = Vec<Vec<usize>>;
 
-#[inline]
-pub fn orbits_to_js_array(orbits: &Orbits) -> js_sys::Array {
-    orbits.to_vec().into_iter().map(
-        |ob| -> js_sys::Array { ob.into_iter().map(JsValue::from).collect() }
-    ).collect() 
-}
-
 #[wasm_bindgen]
-pub struct GIVPResult {
+pub struct SymmetryResult {
     orbits: Orbits, 
     numbering: Vec<usize>
 }
 
 #[wasm_bindgen]
-impl GIVPResult {
-    pub fn get_orbits(&self) -> js_sys::Array {
-        orbits_to_js_array(&self.orbits)
+impl SymmetryResult {
+    pub fn get_orbits(&self, index: usize) -> Vec<usize> {
+        if index < self.orbits.len() {
+            self.orbits[index].clone()
+        } else {
+            vec![]
+        }
     }
 
     pub fn get_numbering(&self) -> Vec<usize> {
@@ -52,14 +49,15 @@ impl GIVPResult {
 }
 
 #[wasm_bindgen]
-pub fn givp(avw: &AtomVecWrapper) -> GIVPResult {
+pub fn givp(avw: &AtomVecWrapper) -> SymmetryResult {
     let (orbits, numbering) = molecule::symmetry_perception_givp(&avw.atoms);
-    GIVPResult { orbits, numbering }
+    SymmetryResult { orbits, numbering }
 }
 
 #[wasm_bindgen]
-pub fn cnap(avw: &AtomVecWrapper, gr: &GIVPResult) -> js_sys::Array {
-    orbits_to_js_array(&molecule::symmetry_perception_cnap(&avw.atoms, &gr.orbits, &gr.numbering))
+pub fn cnap(avw: &AtomVecWrapper, sr: &SymmetryResult) -> SymmetryResult {
+    // orbits_to_js_array(&molecule::symmetry_perception_cnap(&avw.atoms, &gr.orbits, &gr.numbering))
+    SymmetryResult { orbits: molecule::symmetry_perception_cnap(&avw.atoms, &sr.orbits, &sr.numbering), numbering: vec![] }
 }
 
 #[wasm_bindgen]
